@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: rgb(189, 230, 234);
+    }
+
+    #board-container {
+      position: relative;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #241e1e;
+      font-size: 2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background-color: #d7d2d2;
+    }
+
+    #winMessage {
+      position: absolute;
+      bottom: 80;
+      text-align: center;
+      width: 100%;
+      margin-bottom: 100%;
+      font-size: 1.5em;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+<div id="board-container">
+  <div id="board"></div>
+  <div id="winMessage"></div>
+</div>
+
+<script>
+  // Initial state
+  let currentPlayer = 'X';
+  let gameBoard = ['', '', '', '', '', '', '', '', ''];
+  let gameActive = true;
+
+  const board = document.getElementById('board');
+  const boardContainer = document.getElementById('board-container');
+  const winMessage = document.getElementById('winMessage');
+
+  // Create the Tic-Tac-Toe board
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    cell.dataset.index = i;
+    cell.addEventListener('click', handleCellClick);
+    board.appendChild(cell);
+  }
+
+  function handleCellClick(event) {
+    const index = event.target.dataset.index;
+
+    // Check if the cell is already occupied or the game is over
+    if (gameBoard[index] !== '' || !gameActive) {
+      return;
+    }
+
+    // Update the game board and display
+    gameBoard[index] = currentPlayer;
+    event.target.textContent = currentPlayer;
+
+    // Check for a winner or a tie
+    if (checkWinner()) {
+      displayWinMessage();
+      gameActive = false;
+    } else if (checkTie()) {
+      alert('It\'s a tie!');
+      gameActive = false;
+    } else {
+      // Switch to the other player
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    }
+  }
+
+  function checkWinner() {
+    const winPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function checkTie() {
+    return gameBoard.every(cell => cell !== '');
+  }
+
+  function displayWinMessage() {
+    winMessage.textContent = `Player ${currentPlayer} wins!`;
+    winMessage.style.color = currentPlayer === 'X' ? 'green' : 'red';
+  }
+</script>
+
+</body>
+</html>
